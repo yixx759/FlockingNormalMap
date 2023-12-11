@@ -1,0 +1,90 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+
+
+
+
+struct locforbug
+{
+   float2 pos;
+  float rot;
+
+
+};
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+
+
+//CHANGE RESULT TO HALF WHEN FINISHED
+RWTexture2D<float> Result;
+
+
+StructuredBuffer<locforbug> todraw;
+
+
+//maybe const
+float2 num;
+float size;
+float sizeofbuff;
+float ang;
+float2 size2;
+
+float dist(float2 a, float2 b)
+{
+float2 c  = b-a;
+
+     
+    return dot(c,c);;
+}
+
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+   
+
+        
+         const float pi = 3.14159;
+         float sine, cosine;
+        //using turns input we rotate the charcter
+         const float angle = pi * (todraw[id.z].rot *2);
+         sincos(angle,cosine,sine );
+         float2 max23 = todraw[id.z].pos - id.xy;
+         float2  max2 = float2(max23.x *cosine-sine*max23.y, max23.y*cosine+max23.x*sine);
+         float2 max22 = abs(max2)-size2;
+         
+       
+        float2 tosee = float2(size2.x, 0);
+        int ya= ((max2 >= size2 )&& sqrt(dist(tosee, max2 )) < (size2).y );
+    //remove sqrt for optimization
+    
+ 
+
+
+    
+          const float maxx = max22.x;
+         //
+         const float maxy = max22.y;
+
+        float g = 1- saturate(max(maxx, maxy));
+    int use = g >0 || ya;
+    
+     
+
+    Result[id.xy] += (length(max22*0.01)*use)*7;
+
+
+
+    
+    
+        
+     
+      
+    
+
+      
+
+   
+}
