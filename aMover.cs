@@ -187,7 +187,7 @@ public class aMover : MonoBehaviour
     }
 
 
-    
+    [BurstCompile]
      struct nuMoverJOB : IJobParallelFor
     {
         
